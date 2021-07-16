@@ -44,10 +44,12 @@ void updateGen(bool *inImage, bool *outImage, const unsigned WIDTH, const unsign
 			for (int j = -1; j < 2; j++) {				
 				int row = (idx / WIDTH) + j;
 
-				if ((i == 0 && j == 0) || row < 0 || row >= HEIGHT)
+				if ((i == 0 && j == 0))
 					continue;
 
-				cellsAlive += inImage[row * WIDTH + col];
+				int rowIdx = ((HEIGHT + row % HEIGHT) % HEIGHT) * WIDTH;
+				int colIdx = (WIDTH + col % WIDTH) % WIDTH;
+				cellsAlive += inImage[rowIdx + colIdx];
 			}
 		}
 
@@ -92,7 +94,7 @@ int main(int argc, char* argv[]) {
 	const unsigned GENS = std::atoi(argv[1]), SLEEP_MILLI = std::atoi(argv[2]);
 	const std::string INPUT_PATH = argv[3];
 	
-	// > game_of_life.exe 100 100 r-pentomino.txt output.txt
+	// > ./cgol 100 100 r-pentomino.txt output.txt
 
 	std::ifstream inputFile(INPUT_PATH);
 
@@ -113,14 +115,14 @@ int main(int argc, char* argv[]) {
 
 	inputFile.close();
 
-	for (int i = 0; i < GENS + 1; i++) {
+	for (int i = 0; i < GENS + 1; ) {
 		std::this_thread::sleep_for(std::chrono::milliseconds(SLEEP_MILLI));
 		clearScreen();
 
 		updateGen(inImage, outImage, width, height);
 		printGame(outImage, width, height);
 		std::swap(inImage, outImage);
-		std::cout << "Generation: " << i << '/' << GENS;
+		//std::cout << "Generation: " << i << '/' << GENS;
 	}
 
 	if (argc == 5 && (!strcmp(argv[4], "--output") || !strcmp(argv[4], "-o"))) {
