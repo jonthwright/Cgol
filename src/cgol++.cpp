@@ -25,7 +25,7 @@ void printGame(bool *image, const unsigned WIDTH, const unsigned HEIGHT) {
 		stream << (image[idx] ? '*' : ' ');
 		
 		if ((idx + 1) % WIDTH == 0)
-			stream << std::endl;
+			stream << '\n';
 	}
 
 	std::cout << stream.str();
